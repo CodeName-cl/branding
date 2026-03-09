@@ -17,7 +17,8 @@ import {
   Globe,
   ShoppingBag,
   Cpu,
-  Zap
+  Zap,
+  Download
 } from 'lucide-react';
 
 // --- Types ---
@@ -218,9 +219,16 @@ export default function App() {
               Codename <span className="text-slate-400">Identity</span>
             </h1>
             <p className="text-xl text-slate-500 leading-relaxed max-w-2xl">
-              A comprehensive guide to the visual and verbal identity of Codename. 
+              A comprehensive guide to the visual and verbal identity of Codename.
               Built for designers, copywriters, and partners.
             </p>
+            <button
+              onClick={() => window.print()}
+              className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 bg-orange-cta text-white font-semibold text-sm rounded-xl shadow-lg shadow-orange-cta/20 hover:scale-[1.02] active:scale-[0.98] transition-transform print:hidden"
+            >
+              <Download className="w-4 h-4" />
+              Download as PDF
+            </button>
           </div>
 
           {/* Sections */}

@@ -31,3 +31,51 @@
     @apply bg-white rounded-2xl border border-slate-200 shadow-sm p-6;
   }
 }
+
+/* Print / PDF export styles */
+@media print {
+  @page {
+    size: A4;
+    margin: 1.5cm;
+  }
+
+  body {
+    background: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Hide sidebar and mobile header */
+  aside,
+  header.lg\:hidden {
+    display: none !important;
+  }
+
+  /* Remove scroll container constraints */
+  main {
+    height: auto !important;
+    overflow: visible !important;
+    padding: 0 !important;
+  }
+
+  /* Force all motion-animated elements visible */
+  section,
+  div,
+  [style*="opacity"],
+  [style*="transform"] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* Keep headings with their content */
+  h1, h2, h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  /* Preserve color swatches */
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

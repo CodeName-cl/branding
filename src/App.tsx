@@ -27,7 +27,7 @@ type Section = 'about' | 'products' | 'team' | 'positioning' | 'voice' | 'visual
 
 const Logo = ({ className = "" }: { className?: string }) => (
   <div className={`flex flex-col font-condensed font-bold leading-[0.75] uppercase ${className}`}>
-    <div className="text-white text-[1.18em] tracking-[0.05em]">CODE</div>
+    <div className="text-white text-[0.97em] tracking-[0.05em]">CODE</div>
     <div className="text-white tracking-tighter">/NAME</div>
   </div>
 );

@@ -1,0 +1,76 @@
+name: Build and Deploy PR
+
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
+jobs:
+  build-and-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout dev
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Prepare deploy branch
+        run: |
+          DEV_SHA=$(git rev-parse --short HEAD)
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Save build output
+          cp -r dist /tmp/dist-output
+
+          # Create deploy branch from main
+          BRANCH_NAME="release/$(date -u +%y-%m-%d)"
+          git fetch origin main
+          git checkout -B "$BRANCH_NAME" origin/main
+
+          # Remove all tracked files
+          git rm -rf . > /dev/null 2>&1 || true
+
+          # Copy built static files
+          cp -r /tmp/dist-output/. .
+
+          # Disable Jekyll so _astro/ dir is served
+          touch .nojekyll
+
+          # Stage everything
+          git add -A
+
+          # Check if there are actual changes
+          if git diff --cached --quiet; then
+            echo "NO_CHANGES=true" >> $GITHUB_ENV
+            echo "No changes to deploy"
+          else
+            git commit -m "build: static site from dev@${DEV_SHA}"
+            git push -f origin "$BRANCH_NAME"
+            echo "NO_CHANGES=false" >> $GITHUB_ENV
+          fi
+
+      - name: Summary
+        if: env.NO_CHANGES != 'true'
+        run: echo "Pushed release branch — ready to merge into main."
